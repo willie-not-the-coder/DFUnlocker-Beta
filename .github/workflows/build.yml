@@ -31,3 +31,36 @@ jobs:
       with:
         name: DFUUnlocker-Windows-Build
         path: build/windows/x64/runner/Release/
+name: Compile Windows App
+
+on:
+  workflow_dispatch: # يتيح لك تشغيل التجميع يدوياً بنقرة زر
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Clone repository
+      uses: actions/checkout@v4
+
+    - name: Set up Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        channel: 'stable'
+        flutter-version: '3.27.0' # تم التحديث لإصدار حديث يوفر حزمة Dart مطابقة للمطلوب لقراءة ملف pubspec.yaml بنجاح
+
+    - name: Install dependencies
+      run: flutter pub get
+
+    - name: Enable Windows Desktop Build
+      run: flutter config --enable-windows-desktop
+
+    - name: Compile Windows Release Executable
+      run: flutter build windows --release
+
+    - name: Upload Finished Zip File
+      uses: actions/upload-artifact@v4
+      with:
+        name: DFUUnlocker-Windows-Build
+        path: build/windows/x64/runner/Release/
